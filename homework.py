@@ -13,26 +13,29 @@ class InfoMessage:
 
     """Переменные с фразами."""
     TRAINING_TYPE: str = 'Тип тренировки: {}; '
-    DURATION: str = 'Длительность: {:.3f}; '
-    DISTANCE: str = 'Дистанция: {:.3f} км: '
+    DURATION: str = 'Длительность: {:.3f} ч.; '
+    DISTANCE: str = 'Дистанция: {:.3f} км; '
     MEAN_SPEAD: str = 'Ср. скорость: {:.3f} км/ч; '
     SPENT_CAL: str = 'Потрачено ккал: {:.3f}.'
 
-    def get_message(self) -> tuple:
-        """Возвращает кортеж с данными о тренировке."""
-        return (self.TRAINING_TYPE.format(self.training_type),
-                self.DURATION.format(self.duration),
-                self.DISTANCE.format(self.distance),
-                self.MEAN_SPEAD.format(self.speed),
-                self.SPENT_CAL.format(self.calories))
+    def get_message(self) -> str:
+        """Возвращает строку с данными о тренировке."""
+        my_message: str = ''  # Cоздаём строку из кортежей.
+        for s in (self.TRAINING_TYPE.format(self.training_type),
+                  self.DURATION.format(self.duration),
+                  self.DISTANCE.format(self.distance),
+                  self.MEAN_SPEAD.format(self.speed),
+                  self.SPENT_CAL.format(self.calories)):
+            my_message += s
+        return my_message
 
 
 class Training:
     """Базовый класс тренировки."""
 
-    LEN_STEP: float = 0.65  # длина одного шага в м
-    M_IN_KM: int = 1000  # константа для перевода метррв в км
-    H_IN_MIN: int = 60  # константа для перевода часы в мин
+    LEN_STEP: float = 0.65  # Длина одного шага в м.
+    M_IN_KM: int = 1000  # Константа для перевода метррв в км.
+    H_IN_MIN: int = 60  # Константа для перевода часы в мин.
 
     def __init__(self,
                  action: int,
@@ -53,7 +56,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        pass
+        raise NotImplementedError
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -63,7 +66,11 @@ class Training:
         speed: float = self.get_mean_speed()
         calories: float = self.get_spent_calories()
 
-        return InfoMessage(training_type, duration, distance, speed, calories)
+        return InfoMessage(training_type,
+                           duration,
+                           distance,
+                           speed,
+                           calories)
 
 
 class Running(Training):
@@ -138,22 +145,20 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    class_dict = {  # словарь для создания объекта класса Training
-        'SWM': Swimming,
+    class_dict: dict[str, type] = {  # Cловарь для создания
+        'SWM': Swimming,             # объекта класса Training.
         'RUN': Running,
         'WLK': SportsWalking,
     }
-    training: Training = class_dict[workout_type](*data)
-    return training
+    if workout_type not in class_dict:
+        raise ValueError('Передан неизвестный тип данных.')
+    return class_dict[workout_type](*data)
 
 
 def main(training: Training) -> None:
     """Главная функция."""
     info: InfoMessage = training.show_training_info()
-    my_message: str = ''  # создаём строку из пришедших кортежей
-    for s in info.get_message():
-        my_message += s
-    print(my_message)
+    print(info.get_message())
 
 
 if __name__ == '__main__':
@@ -161,6 +166,7 @@ if __name__ == '__main__':
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
+        ('ZED', [1000, 1, 30, 20]),
     ]
 
     for workout_type, data in packages:
