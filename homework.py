@@ -11,23 +11,18 @@ class InfoMessage:
     speed: float
     calories: float
 
-    """Переменные с фразами."""
-    TRAINING_TYPE: str = 'Тип тренировки: {}; '
-    DURATION: str = 'Длительность: {:.3f} ч.; '
-    DISTANCE: str = 'Дистанция: {:.3f} км; '
-    MEAN_SPEAD: str = 'Ср. скорость: {:.3f} км/ч; '
-    SPENT_CAL: str = 'Потрачено ккал: {:.3f}.'
+    """Переменная с фразой."""
+    STR_WITH_PHRASE = ('Тип тренировки: {}; Длительность: {:.3f} ч.;'
+                       ' Дистанция: {:.3f} км; '
+                       'Ср. скорость: {:.3f} км/ч; Потрачено ккал: {:.3f}.')
 
     def get_message(self) -> str:
         """Возвращает строку с данными о тренировке."""
-        my_message: str = ''  # Cоздаём строку из кортежей.
-        for s in (self.TRAINING_TYPE.format(self.training_type),
-                  self.DURATION.format(self.duration),
-                  self.DISTANCE.format(self.distance),
-                  self.MEAN_SPEAD.format(self.speed),
-                  self.SPENT_CAL.format(self.calories)):
-            my_message += s
-        return my_message
+        return self.STR_WITH_PHRASE.format(self.training_type,
+                                           self.duration,
+                                           self.distance,
+                                           self.speed,
+                                           self.calories)
 
 
 class Training:
@@ -56,7 +51,7 @@ class Training:
 
     def get_spent_calories(self) -> float:
         """Получить количество затраченных калорий."""
-        raise NotImplementedError
+        raise NotImplementedError('Метод не был переопределен у подкласса.')
 
     def show_training_info(self) -> InfoMessage:
         """Вернуть информационное сообщение о выполненной тренировке."""
@@ -145,8 +140,8 @@ class Swimming(Training):
 
 def read_package(workout_type: str, data: list) -> Training:
     """Прочитать данные полученные от датчиков."""
-    class_dict: dict[str, type] = {  # Cловарь для создания
-        'SWM': Swimming,             # объекта класса Training.
+    class_dict: dict[str, type[Training]] = {  # Cловарь для создания
+        'SWM': Swimming,                       # объекта класса Training.
         'RUN': Running,
         'WLK': SportsWalking,
     }
@@ -166,7 +161,6 @@ if __name__ == '__main__':
         ('SWM', [720, 1, 80, 25, 40]),
         ('RUN', [15000, 1, 75]),
         ('WLK', [9000, 1, 75, 180]),
-        ('ZED', [1000, 1, 30, 20]),
     ]
 
     for workout_type, data in packages:
