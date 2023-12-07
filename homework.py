@@ -12,17 +12,17 @@ class InfoMessage:
     calories: float
 
     """Переменная с фразой."""
-    STR_WITH_PHRASE = ('Тип тренировки: {}; Длительность: {:.3f} ч.;'
+    STR_PHRASE: str = ('Тип тренировки: {}; Длительность: {:.3f} ч.;'
                        ' Дистанция: {:.3f} км; '
                        'Ср. скорость: {:.3f} км/ч; Потрачено ккал: {:.3f}.')
 
     def get_message(self) -> str:
         """Возвращает строку с данными о тренировке."""
-        return self.STR_WITH_PHRASE.format(self.training_type,
-                                           self.duration,
-                                           self.distance,
-                                           self.speed,
-                                           self.calories)
+        return self.STR_PHRASE.format(self.training_type,
+                                      self.duration,
+                                      self.distance,
+                                      self.speed,
+                                      self.calories)
 
 
 class Training:
