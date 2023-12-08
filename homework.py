@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, asdict
 
 
 @dataclass
@@ -18,11 +18,7 @@ class InfoMessage:
 
     def get_message(self) -> str:
         """Возвращает строку с данными о тренировке."""
-        return self.STR_PHRASE.format(self.training_type,
-                                      self.duration,
-                                      self.distance,
-                                      self.speed,
-                                      self.calories)
+        return self.STR_PHRASE.format(*asdict(self).values())
 
 
 class Training:
